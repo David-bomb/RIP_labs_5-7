@@ -1,0 +1,33 @@
+.home-hero {
+    max-width: 900px;
+    margin: 3.5rem auto 0; 
+    text-align: center;
+    padding: 0 1rem;
+}
+
+.home-title {
+    font-family: var(--main_font);
+    color: var(--text-light);
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem; 
+}
+
+.home-lead {
+    color: var(--text-light); 
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.home-hero .btn-primary {
+    background-color: var(--btn-green);
+    color: var(--text-dark);
+    padding: 0.9rem 1.5rem;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .home-title {
+        font-size: 1.75rem;
+    }
+}

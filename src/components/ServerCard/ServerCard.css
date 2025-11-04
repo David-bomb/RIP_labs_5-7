@@ -1,0 +1,95 @@
+.server-card {
+    flex: 0 1 350px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    background-color: var(--bg-element);
+    border-radius: var(--border-radius-std);
+    overflow: hidden;
+}
+
+.server-card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    background-color: var(--bg-element);
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.server-card-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    min-height: 390px;
+}
+
+.server-card-title {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.server-card-title {
+    color: var(--text-light); 
+}
+
+.server-card-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+    flex-grow: 1;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--bg-spec);
+    padding: 12px 15px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.spec-item span {
+    color: var(--text-light); 
+}
+
+.spec-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.server-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: auto; 
+}
+
+.server-card .btn {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 20px;
+    font-size: 1rem;
+}
+
+.server-card .btn-secondary {
+    background-color: #ffffff;
+    color: var(--text-dark);
+    border: none;
+}
+
+.server-card .btn-secondary:hover {
+    background-color: #e0e0e0;
+    color: var(--text-dark);
+}
+
+.server-card .btn-secondary {
+    transition: background-color 0.15s ease-in-out;
+}

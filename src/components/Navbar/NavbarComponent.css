@@ -1,0 +1,51 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-navbar);
+    z-index: 1000;
+    padding: 0 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: flex-start; 
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 70px;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-light) !important;
+    text-decoration: none;
+    font-family: var(--main_font);
+    /* margin-right: auto; */
+}
+
+.navbar-brand:hover {
+    color: var(--text-light) !important;
+}
+
+.navbar-links {
+    margin-left: auto;
+}
+
+/* Stronger positioning to ensure brand is visually left-aligned even if other styles interfere 
+.navbar-container {
+    /* position: relative; 
+}
+*/
+
+.navbar .navbar-brand {
+    position: absolute;
+    left: 24rem; 
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem !important;
+    color: var(--text-light) !important;
+}

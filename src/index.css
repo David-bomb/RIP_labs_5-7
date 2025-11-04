@@ -1,0 +1,60 @@
+@font-face {
+    font-family: 'Furore';
+    src: url('/fonts/Furore.woff2') format('woff2');
+}
+
+:root {
+    --bg-main: #121212;
+    --bg-navbar: #222;
+    --bg-element: #292929;
+    --bg-spec: #3a3a3a;
+    --btn-green: #0ac85b;
+    --accent-red: rgb(217, 17, 17);
+    --border-color: rgba(255,255,255, 0.2);
+    --text-light: #ffffff;
+    --text-dark: #121212;
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --border-radius-std: 16px;
+    --main_font: "Furore", Arial, sans-serif;
+    --secondary_font: "Manrope", Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: var(--secondary_font);
+    background-color: var(--bg-main);
+    color: var(--text-light);
+    overflow-y: scroll;
+}
+
+h1, h2, h3 {
+    font-family: var(--main_font);
+}
+
+.btn {
+    border-radius: var(--border-radius-std);
+    font-family: var(--secondary_font);
+    font-weight: 700;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--btn-green);
+    color: var(--text-dark);
+    border-color: var(--btn-green);
+}
+
+.btn-primary:hover {
+    background-color: #00d962;
+    border-color: #00d962;
+}
+
+.btn-secondary {
+    background-color: #ffffff; 
+    color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+}

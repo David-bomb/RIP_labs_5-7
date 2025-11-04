@@ -1,0 +1,24 @@
+.catalog-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+h1 {
+    color: var(--text-light);
+    font-family: var(--main_font);
+}
+
+h1 {
+    color: var(--text-light);
+    font-family: var(--main_font);
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
