@@ -8,7 +8,7 @@ export const NavbarComponent: React.FC = () => {
             <div className="navbar-container">
                 <Link to="/" className="navbar-brand">Render Calc</Link>
                 <div className="navbar-links">
-                    {/* Ссылки можно будет добавить позже */}
+                    <Link to="/servers">Серверы</Link>
                 </div>
             </div>
         </nav>

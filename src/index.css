@@ -22,7 +22,7 @@
 body {
     margin: 0;
     font-family: var(--secondary_font);
-    background-color: var(--bg-main);
+    background-color: var(--bg-main); /* var(--bg-main); transparent*/
     color: var(--text-light);
     overflow-y: scroll;
 }
@@ -57,4 +57,8 @@ h1, h2, h3 {
 
 .btn-secondary:hover {
     background-color: #e0e0e0;
+}
+
+.main-container.transparent-bg {
+    background-color: transparent;
 }

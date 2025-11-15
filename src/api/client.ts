@@ -1,5 +1,5 @@
 import { MOCK_SERVERS } from "./servers_mock";
-import type { IServer } from "./types";
+import type { IServer, ICartInfo } from "./types";
 
 const API_BASE_URL = '/api/v1';
 
@@ -74,5 +74,27 @@ export const getServerById = async (id: number): Promise<IServer | undefined> =>
         // Логика отката на mock-данные
         const server = MOCK_SERVERS.find(s => s.id === id);
         return server ? { ...server, image_url: normalizeImageUrl(server.image_url) } : undefined;
+    }
+};
+
+/**
+ * Имитирует GET-запрос для получения информации о корзине.
+ * @returns Promise, который разрешается объектом с ID заявки и количеством серверов.
+ */
+export const getCartInfo = async (): Promise<ICartInfo> => {
+    const url = `${API_BASE_URL}/scene_renders/draft_info/`;
+    
+    try {
+        console.log(`Отправка реального запроса: GET ${url}`);
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data: ICartInfo = await response.json();
+        return data;
+    } catch (error) {
+        console.warn('Ошибка при запросе информации о корзине. Возвращаются значения по умолчанию.', error);
+        // В случае ошибки возвращаем "два нуля"
+        return { scene_render_id: null, servers_count: 0 };
     }
 };
