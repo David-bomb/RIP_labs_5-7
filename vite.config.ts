@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa' // <-- ДОБАВЛЕН ИМПОРТ
+import { VitePWA } from 'vite-plugin-pwa'
 
-// https://vitejs.dev/config/
+const repoName = "/RIP_labs_5-7/"; // <-- Вынесем имя репозитория в переменную
+
 export default defineConfig({
-  base: '/RIP_labs_5-7/', // <-- ДОБАВЛЕНО ДЛЯ РАЗВЕРТЫВАНИЯ НА GITHUB PAGES
+  base: repoName, // <-- Используем переменную
   server: {
     port: 3000,
     proxy: {
@@ -16,34 +17,35 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    // --- НОВЫЙ БЛОК: Конфигурация PWA ---
     VitePWA({
-      registerType: 'autoUpdate', // Автоматически обновлять Service Worker
+      registerType: 'autoUpdate',
       devOptions: {
-        enabled: true // Включаем PWA в режиме разработки для тестирования
+        enabled: true
       },
       manifest: {
+        // --- ИСПРАВЛЕННЫЙ БЛОК MANIFEST ---
         name: "Render Calc",
         short_name: "RenderCalc",
-        start_url: "/",
+        description: "Калькулятор времени рендера",
+        theme_color: "#121212",
+        background_color: "#121212",
         display: "standalone",
-        background_color: "#121212", // Наш основной фон
-        theme_color: "#222222",      // Цвет навбара
-        orientation: "portrait-primary",
+        scope: repoName, // <-- Явно указываем область видимости
+        start_url: repoName, // <-- Явно указываем стартовый URL
         icons: [
           {
-            "src": "/logo192.png", // Путь к иконке в папке /public
-            "type": "image/png",
-            "sizes": "192x192"
+            src: 'logo192.png', // <-- Пути теперь должны быть относительными
+            sizes: '192x192',
+            type: 'image/png'
           },
           {
-            "src": "/logo512.png", // Путь к иконке в папке /public
-            "type": "image/png",
-            "sizes": "512x512"
+            src: 'logo512.png',
+            sizes: '512x512',
+            type: 'image/png'
           }
-        ],
+        ]
+        // --- КОНЕЦ ИСПРАВЛЕННОГО БЛОКА ---
       }
     })
-    // --- КОНЕЦ НОВОГО БЛОКА ---
   ],
 })

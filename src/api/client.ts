@@ -3,80 +3,71 @@ import type { IServer, ICartInfo } from "./types";
 
 const API_BASE_URL = '/api/v1';
 
-const MINIO_IMAGES_BASE = 'http://localhost:9000/images';
+const MINIO_URL = 'http://localhost:9000/images'; // URL для локальной разработки
 
 /**
- * Нормализует поле image_url: если это относительный путь - превращает в полный URL на MinIO,
- * если уже полноценный URL (http/https) или null — возвращает как есть.
+ * Обрабатывает URL изображений в зависимости от окружения.
+ * @param servers - Массив серверов, полученный от API или из моков.
+ * @returns Массив серверов с корректными image_url.
  */
-const normalizeImageUrl = (imageUrl: string | null): string | null => {
-    if (!imageUrl) return null;
-    const trimmed = imageUrl.trim();
-    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
-    // Убираем ведущие слэши, затем присоединяем к базовому пути
-    const rel = trimmed.replace(/^\/+/, '');
-    return `${MINIO_IMAGES_BASE}/${rel}`;
+const processServerImageUrls = (servers: IServer[]): IServer[] => {
+    const useMinio = import.meta.env.VITE_USE_MINIO === 'true';
+
+    return servers.map(server => {
+        if (!server.image_url) {
+            return server; // Возвращаем как есть, если картинки нет
+        }
+
+        if (useMinio) {
+            // РЕЖИМ РАЗРАБОТКИ: Строим полный URL к Minio
+            return { ...server, image_url: `${MINIO_URL}/${server.image_url}` };
+        } else {
+            // РЕЖИМ GITHUB PAGES: Строим относительный путь к локальным файлам
+            // import.meta.env.BASE_URL здесь вернет /RIP_labs_5-7/
+            const imageName = server.image_url.split('/').pop(); // Извлекаем имя файла, например, '1.webp'
+            return { ...server, image_url: `${import.meta.env.BASE_URL}servers/${imageName}` };
+        }
+    });
 };
 
-/**
- * Выполняет GET-запрос для получения списка серверов с фильтрацией на бэкенде.
- * В случае ошибки сети возвращает данные из mock-объектов.
- * @param filterString - Строка для поиска по названию.
- * @returns Promise, который разрешается массивом серверов.
- */
+// --- ОБНОВЛЕННАЯ ФУНКЦИЯ getServers ---
 export const getServers = async (filterString: string = ''): Promise<IServer[]> => {
     const url = `${API_BASE_URL}/servers/?name=${encodeURIComponent(filterString)}`;
-    
     try {
-        console.log(`Отправка реального запроса: GET ${url}`);
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: IServer[] = await response.json();
-        return data.map(s => ({ ...s, image_url: normalizeImageUrl(s.image_url) }));
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        let data: IServer[] = await response.json();
+        return processServerImageUrls(data); // <-- Обрабатываем URL
     } catch (error) {
-        console.warn('Ошибка при запросе к API. Используются mock-данные.', error);
-        
+        console.warn('Ошибка API. Используются mock-данные.', error);
         let servers = MOCK_SERVERS;
         if (filterString) {
-            servers = MOCK_SERVERS.filter(server => 
-                server.name.toLowerCase().includes(filterString.toLowerCase())
-            );
+            servers = MOCK_SERVERS.filter(s => s.name.toLowerCase().includes(filterString.toLowerCase()));
         }
-        return servers.map(s => ({ ...s, image_url: normalizeImageUrl(s.image_url) }));
+        return processServerImageUrls(servers); // <-- Обрабатываем URL и для моков
     }
 };
 
-/**
- * Выполняет GET-запрос для получения одного сервера по ID.
- * В случае ошибки сети возвращает данные из mock-объектов.
- * @param id - ID сервера.
- * @returns Promise, который разрешается одним сервером или undefined, если не найден.
- */
+// --- ОБНОВЛЕННАЯ ФУНКЦИЯ getServerById ---
 export const getServerById = async (id: number): Promise<IServer | undefined> => {
     const url = `${API_BASE_URL}/servers/${id}/`;
-    
     try {
-        console.log(`Отправка реального запроса: GET ${url}`);
         const response = await fetch(url);
+        // Убираем специальную проверку на 404. Любой неуспешный ответ - это ошибка.
         if (!response.ok) {
-            if (response.status === 404) {
-                return undefined;
-            }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        // Ответ от бэкенда - один объект, а не массив.
         const data: IServer = await response.json();
-        return { ...data, image_url: normalizeImageUrl(data.image_url) };
+        // Оборачиваем в массив только для передачи в processServerImageUrls
+        return processServerImageUrls([data])[0]; 
     } catch (error) {
-        console.warn(`Ошибка при запросе к API для сервера ID ${id}. Используются mock-данные.`, error);
-
-        // Логика отката на mock-данные
+        console.warn(`Ошибка API для ID ${id}. Используются mock-данные.`, error);
         const server = MOCK_SERVERS.find(s => s.id === id);
-        return server ? { ...server, image_url: normalizeImageUrl(server.image_url) } : undefined;
+        // Обрабатываем URL и для моков
+        return server ? processServerImageUrls([server])[0] : undefined;
     }
 };
-
 /**
  * Имитирует GET-запрос для получения информации о корзине.
  * @returns Promise, который разрешается объектом с ID заявки и количеством серверов.
