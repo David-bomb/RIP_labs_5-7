@@ -22,3 +22,12 @@ h1 {
     align-items: center;
     min-height: 50vh;
 }
+
+/* Адаптивность для мобильных устройств */
+
+@media (max-width: 768px) {
+    .catalog-grid {
+        /* Карточки будут занимать всю ширину и выстроятся в колонку */
+        flex-direction: column;
+    }
+}

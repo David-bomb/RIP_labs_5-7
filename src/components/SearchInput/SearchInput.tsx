@@ -2,13 +2,17 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import './SearchInput.css';
 
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setSearchQuery } from '../../store/filtersSlice';
+
 interface SearchInputProps {
-    value: string;
-    onChange: (value: string) => void;
     onSearch: () => void;
 }
 
-export const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, onSearch }) => {
+export const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
+    // Получаем dispatch и текущее значение searchQuery из Redux
+    const dispatch = useAppDispatch();
+    const searchQuery = useAppSelector((state) => state.filters.searchQuery);
     
     const handleKeyDown = (event: React.KeyboardEvent) => {
         if (event.key === 'Enter') {
@@ -22,8 +26,9 @@ export const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, onSea
                 className="search-input" 
                 type="text" 
                 placeholder="Поиск по названию..." 
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
+                value={searchQuery}
+                // При изменении вызываем action, чтобы обновить состояние в Redux
+                onChange={(e) => dispatch(setSearchQuery(e.target.value))}
                 onKeyDown={handleKeyDown}
             />
             <Button variant="primary" onClick={onSearch}>Найти</Button>

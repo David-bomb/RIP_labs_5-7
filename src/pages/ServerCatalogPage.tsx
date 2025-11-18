@@ -7,10 +7,17 @@ import { BreadcrumbsComponent } from '../components/Breadcrumbs/BreadcrumbsCompo
 import { Spinner } from 'react-bootstrap';
 import './ServerCatalogPage.css';
 
+// --- ДОБАВЛЕНЫ ИМПОРТЫ REDUX ---
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { setSearchQuery } from '../store/filtersSlice';
+
 export const ServerCatalogPage: React.FC = () => {
     const [servers, setServers] = useState<IServer[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
+    
+    // Получаем dispatch и searchQuery из Redux
+    const dispatch = useAppDispatch();
+    const searchQuery = useAppSelector((state) => state.filters.searchQuery);
 
     const fetchServers = (query: string) => {
         setIsLoading(true);
@@ -24,21 +31,20 @@ export const ServerCatalogPage: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchServers('');
-    }, []);
+        // При первой загрузке страницы используем значение из Redux
+        fetchServers(searchQuery); 
+    }, []); // Пустой массив зависимостей, чтобы сработал только один раз
 
     const handleSearch = () => {
+        // При нажатии на кнопку "Найти", используем текущее значение из Redux
         fetchServers(searchQuery);
     };
 
     return (
         <>
             <BreadcrumbsComponent crumbs={[{ label: 'Каталог' }]} />
-            <SearchInput 
-                value={searchQuery}
-                onChange={setSearchQuery}
-                onSearch={handleSearch}
-            />
+            {/* Компонент SearchInput больше не принимает value и onChange */}
+            <SearchInput onSearch={handleSearch} />
             <h1>Конфигурации серверов</h1>
             {isLoading ? (
                 <div className="spinner-container">

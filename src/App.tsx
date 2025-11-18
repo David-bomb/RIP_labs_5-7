@@ -4,7 +4,7 @@ import { Layout } from './components/Layout/Layout';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/RIP_labs_5-7/"> {/* <-- ДОБАВЛЕНО */}
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />

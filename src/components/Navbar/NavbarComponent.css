@@ -5,37 +5,37 @@
     width: 100%;
     background-color: var(--bg-navbar);
     z-index: 1000;
-    padding: 0 2rem;
+    padding: 0;
     border-bottom: 1px solid var(--border-color);
-    /* Сбрасываем стандартные отступы bootstrap navbar, если они мешают */
-    margin: 0; 
+    margin: 0;
 }
 
 .navbar-container {
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
     align-items: center;
-    max-width: 1200px; 
-    width: 100%; 
-    margin: 0 auto; 
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
     height: 70px;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
 }
 
 .navbar-brand {
-    font-size: 1.7rem !important; 
+    font-size: 1.7rem !important;
     font-weight: 700;
     color: var(--text-light) !important;
     text-decoration: none;
     font-family: var(--main_font);
-    line-height: 1; 
-    white-space: nowrap; 
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .navbar-brand:hover {
     color: var(--text-light) !important;
 }
 
-/* Блок ссылок */
 .navbar-links {
     display: flex;
     align-items: center;
@@ -52,4 +52,72 @@
 .navbar-links a:hover,
 .navbar-links a.active {
     color: var(--text-light);
+}
+
+/* --- Стили для мобильного меню (ЕДИНЫЙ ИСПРАВЛЕННЫЙ БЛОК) --- */
+
+.navbar-burger {
+    display: none;
+    width: 30px;
+    height: 25px;
+    position: relative;
+    cursor: pointer;
+}
+
+.navbar-burger span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: var(--text-light);
+    border-radius: 3px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: .25s ease-in-out;
+}
+
+.navbar-burger span:nth-child(1) { top: 0px; }
+.navbar-burger span:nth-child(2) { top: 10px; }
+.navbar-burger span:nth-child(3) { top: 20px; }
+
+.navbar-burger.active span:nth-child(1) { top: 10px; transform: rotate(135deg); }
+.navbar-burger.active span:nth-child(2) { opacity: 0; left: -60px; }
+.navbar-burger.active span:nth-child(3) { top: 10px; transform: rotate(-135deg); }
+
+.navbar-mobile-menu {
+    /* display: none; <-- Это свойство больше не нужно, т.к. React управляет рендерингом */
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-navbar);
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border-bottom-left-radius: var(--border-radius-std);
+    border-bottom-right-radius: var(--border-radius-std);
+}
+
+.navbar-mobile-menu a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 500;
+    display: block;
+    padding: 0.5rem 0;
+    text-align: center;
+}
+
+.navbar-mobile-menu a.active,
+.navbar-mobile-menu a:hover {
+    color: var(--text-light);
+}
+
+@media (max-width: 768px) {
+    .navbar-links.desktop-only {
+        display: none;
+    }
+    .navbar-burger {
+        display: block;
+    }
 }
