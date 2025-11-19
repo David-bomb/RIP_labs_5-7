@@ -1,10 +1,19 @@
 import { MOCK_SERVERS } from "./servers_mock";
 import type { IServer, ICartInfo } from "./types";
 
-const API_BASE_URL = '/api/v1';
+import { dest_api, dest_img } from "../../target_config"
 
-const MINIO_URL = 'http://localhost:9000/images'; // URL для локальной разработки
 
+// const API_BASE_URL = '/api/v1';
+
+const API_BASE_URL = dest_api;
+
+
+// В продакшне/tauri мы не меняем логику здесь.
+// Для разработки используем проксирование через Vite (порт 3000):
+// браузер будет запрашивать /images/..., а Vite проксирует это на MinIO:9000.
+// const MINIO_URL = '/images'; // через прокси dev сервера (localhost:3000)
+const MINIO_URL = dest_img; 
 /**
  * Обрабатывает URL изображений в зависимости от окружения.
  * @param servers - Массив серверов, полученный от API или из моков.
