@@ -6,6 +6,7 @@
     height: 100vh;
     z-index: -1;
     overflow: hidden;
+    background-color: #000; /* Черный фон на случай задержки загрузки */
 }
 
 .background-video-container video {

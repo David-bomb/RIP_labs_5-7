@@ -1,1 +1,7 @@
 .env
+# Vite build output
+dist/
+dist-ssr/
+
+# Tauri build output
+src-tauri/target/

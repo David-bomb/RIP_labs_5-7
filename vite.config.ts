@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-import {api_proxy_addr, img_proxy_addr} from "./target_config"
+import {api_proxy_target, img_proxy_target} from "./target_config"
 
 const repoName = "/RIP_labs_5-7/"; // <-- Вынесем имя репозитория в переменную
 
@@ -12,12 +12,12 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: api_proxy_addr,
+        target: api_proxy_target,
         changeOrigin: true,
       },
       // Проксируем запросы к MinIO через dev сервер (localhost:3000 -> localhost:9000)
       '/images': {
-        target: img_proxy_addr,
+        target: img_proxy_target,
         changeOrigin: true,
       },
     },

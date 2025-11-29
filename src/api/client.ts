@@ -1,41 +1,30 @@
 import { MOCK_SERVERS } from "./servers_mock";
 import type { IServer, ICartInfo } from "./types";
-
-import { dest_api, dest_img } from "../../target_config"
+import { api_proxy_target, img_proxy_target } from "../../target_config";
 
 
 // const API_BASE_URL = '/api/v1';
-
-const API_BASE_URL = dest_api;
-
-
-// В продакшне/tauri мы не меняем логику здесь.
-// Для разработки используем проксирование через Vite (порт 3000):
-// браузер будет запрашивать /images/..., а Vite проксирует это на MinIO:9000.
-// const MINIO_URL = '/images'; // через прокси dev сервера (localhost:3000)
-const MINIO_URL = dest_img; 
+const is_production = import.meta.env.PROD;
+const API_BASE_URL = is_production ? `${api_proxy_target}/api/v1` : '/api/v1';
+    
+const MINIO_BASE_URL = is_production ? `${img_proxy_target}/images` : '/images';
 /**
  * Обрабатывает URL изображений в зависимости от окружения.
  * @param servers - Массив серверов, полученный от API или из моков.
  * @returns Массив серверов с корректными image_url.
  */
 const processServerImageUrls = (servers: IServer[]): IServer[] => {
-    const useMinio = import.meta.env.VITE_USE_MINIO === 'true';
-
     return servers.map(server => {
         if (!server.image_url) {
-            return server; // Возвращаем как есть, если картинки нет
+            return server;
         }
-
-        if (useMinio) {
-            // РЕЖИМ РАЗРАБОТКИ: Строим полный URL к Minio
-            return { ...server, image_url: `${MINIO_URL}/${server.image_url}` };
-        } else {
-            // РЕЖИМ GITHUB PAGES: Строим относительный путь к локальным файлам
-            // import.meta.env.BASE_URL здесь вернет /RIP_labs_5-7/
-            const imageName = server.image_url.split('/').pop(); // Извлекаем имя файла, например, '1.webp'
-            return { ...server, image_url: `${import.meta.env.BASE_URL}servers/${imageName}` };
-        }
+        // Формируем ссылку на картинку
+        // Если image_url уже полный (например, в моках), оставляем, иначе добавляем базу
+        const imageUrl = server.image_url.startsWith('http') 
+            ? server.image_url 
+            : `${MINIO_BASE_URL}/${server.image_url}`;
+            
+        return { ...server, image_url: imageUrl };
     });
 };
 

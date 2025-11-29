@@ -1,16 +1,17 @@
 import React from 'react';
 import './BackgroundVideo.css';
-
-// Импортируем видео как ресурс. Vite сам подставит правильный путь.
-import videoFile from '/videos/PC_fin.mp4';
+// Импортируем GIF как обычный ассет
+import gifSource from '../../assets/PC_fin.gif';
 
 export const BackgroundVideo: React.FC = () => {
     return (
         <div className="background-video-container">
-            <video autoPlay loop muted playsInline key={videoFile}>
-                <source src={videoFile} type="video/mp4" />
-                Ваш браузер не поддерживает тэг video.
-            </video>
+            {/* Используем img вместо video */}
+            <img 
+                src={gifSource} 
+                alt="Background Animation" 
+                className="background-video" 
+            />
         </div>
     );
 };
