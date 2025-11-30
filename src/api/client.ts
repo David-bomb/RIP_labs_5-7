@@ -42,7 +42,7 @@ export const getServers = async (filterString: string = ''): Promise<IServer[]> 
         if (filterString) {
             servers = MOCK_SERVERS.filter(s => s.name.toLowerCase().includes(filterString.toLowerCase()));
         }
-        return processServerImageUrls(servers); // <-- Обрабатываем URL и для моков
+        return processServerImageUrls(servers); 
     }
 };
 
@@ -51,13 +51,11 @@ export const getServerById = async (id: number): Promise<IServer | undefined> =>
     const url = `${API_BASE_URL}/servers/${id}/`;
     try {
         const response = await fetch(url);
-        // Убираем специальную проверку на 404. Любой неуспешный ответ - это ошибка.
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         // Ответ от бэкенда - один объект, а не массив.
         const data: IServer = await response.json();
-        // Оборачиваем в массив только для передачи в processServerImageUrls
         return processServerImageUrls([data])[0]; 
     } catch (error) {
         console.warn(`Ошибка API для ID ${id}. Используются mock-данные.`, error);
