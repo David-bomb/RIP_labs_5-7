@@ -1,9 +1,18 @@
+import axios from 'axios';
+import { dest_api } from '../config';
 import { MOCK_SERVERS } from "./servers_mock";
 import type { IServer, ICartInfo } from "./types";
 
+const apiClient = axios.create({
+    baseURL: dest_api,
+    headers: {
+        'ngrok-skip-browser-warning': 'true'
+    }
+});
+
 const API_BASE_URL = '/api/v1';
 
-const MINIO_URL = 'http://localhost:9000/images'; // URL для локальной разработки
+const MINIO_URL = '/images'; // URL для локальной разработки
 
 /**
  * Обрабатывает URL изображений в зависимости от окружения.
@@ -33,38 +42,57 @@ const processServerImageUrls = (servers: IServer[]): IServer[] => {
 // --- ОБНОВЛЕННАЯ ФУНКЦИЯ getServers ---
 export const getServers = async (filterString: string = ''): Promise<IServer[]> => {
     const url = `${API_BASE_URL}/servers/?name=${encodeURIComponent(filterString)}`;
+    console.log(`[API Client] Отправка запроса на: ${url}`);
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        let data: IServer[] = await response.json();
-        return processServerImageUrls(data); // <-- Обрабатываем URL
+        const response = await apiClient.get(url);
+        console.log('[API Client] getServers СТАТУС ОТВЕТА:', response.status);
+        console.log('[API Client] getServers ЗАГОЛОВКИ ОТВЕТА:', response.headers);
+        console.log('[API Client] getServers СЫРЫЕ ДАННЫЕ ОТВЕТА:', response.data);
+
+        // Проверяем, что данные - это массив, прежде чем продолжить
+        if (!Array.isArray(response.data)) {
+            throw new Error('Полученные данные не являются массивом. Возможно, это HTML-страница от ngrok.');
+        }
+
+        let data: IServer[] = response.data;
+        return processServerImageUrls(data);
     } catch (error) {
-        console.warn('Ошибка API. Используются mock-данные.', error);
+        console.error('Ошибка API. Используются mock-данные.', error);
+        if (axios.isAxiosError(error) && error.response) {
+            console.error('[API Client] Детали ошибки Axios:', {
+                status: error.response.status,
+                headers: error.response.headers,
+                data: error.response.data,
+            });
+        }
         let servers = MOCK_SERVERS;
         if (filterString) {
             servers = MOCK_SERVERS.filter(s => s.name.toLowerCase().includes(filterString.toLowerCase()));
         }
-        return processServerImageUrls(servers); // <-- Обрабатываем URL и для моков
+        return processServerImageUrls(servers);
     }
 };
 
 // --- ОБНОВЛЕННАЯ ФУНКЦИЯ getServerById ---
 export const getServerById = async (id: number): Promise<IServer | undefined> => {
     const url = `${API_BASE_URL}/servers/${id}/`;
+    console.log(`[API Client] Отправка запроса на: ${url}`);
     try {
-        const response = await fetch(url);
-        // Убираем специальную проверку на 404. Любой неуспешный ответ - это ошибка.
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Ответ от бэкенда - один объект, а не массив.
-        const data: IServer = await response.json();
-        // Оборачиваем в массив только для передачи в processServerImageUrls
+        const response = await apiClient.get(url);
+        console.log('[API Client] getServerById СТАТУС ОТВЕТА:', response.status);
+        console.log('[API Client] getServerById СЫРЫЕ ДАННЫЕ ОТВЕТА:', response.data);
+        const data: IServer = response.data;
         return processServerImageUrls([data])[0]; 
     } catch (error) {
-        console.warn(`Ошибка API для ID ${id}. Используются mock-данные.`, error);
+        console.error(`Ошибка API для ID ${id}. Используются mock-данные.`, error);
+        if (axios.isAxiosError(error) && error.response) {
+            console.error('[API Client] Детали ошибки Axios:', {
+                status: error.response.status,
+                headers: error.response.headers,
+                data: error.response.data,
+            });
+        }
         const server = MOCK_SERVERS.find(s => s.id === id);
-        // Обрабатываем URL и для моков
         return server ? processServerImageUrls([server])[0] : undefined;
     }
 };
@@ -76,16 +104,21 @@ export const getCartInfo = async (): Promise<ICartInfo> => {
     const url = `${API_BASE_URL}/scene_renders/draft_info/`;
     
     try {
-        console.log(`Отправка реального запроса: GET ${url}`);
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: ICartInfo = await response.json();
+        console.log(`[API Client] Отправка запроса на: ${url}`);
+        const response = await apiClient.get(url);
+        console.log('[API Client] getCartInfo СТАТУС ОТВЕТА:', response.status);
+        console.log('[API Client] getCartInfo СЫРЫЕ ДАННЫЕ ОТВЕТА:', response.data);
+        const data: ICartInfo = response.data;
         return data;
     } catch (error) {
         console.warn('Ошибка при запросе информации о корзине. Возвращаются значения по умолчанию.', error);
-        // В случае ошибки возвращаем "два нуля"
+        if (axios.isAxiosError(error) && error.response) {
+            console.error('[API Client] Детали ошибки Axios:', {
+                status: error.response.status,
+                headers: error.response.headers,
+                data: error.response.data,
+            });
+        }
         return { scene_render_id: null, servers_count: 0 };
     }
 };

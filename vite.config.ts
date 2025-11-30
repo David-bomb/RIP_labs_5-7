@@ -8,9 +8,16 @@ export default defineConfig({
   base: repoName, // <-- Используем переменную
   server: {
     port: 3000,
+    allowedHosts: [
+      'all'
+    ],
     proxy: {
       '/api': {
         target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
+      '/images': {
+        target: 'http://127.0.0.1:9000',
         changeOrigin: true,
       },
     },
